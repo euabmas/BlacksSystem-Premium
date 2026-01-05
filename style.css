@@ -1,0 +1,108 @@
+:root {
+    --bg-75-black: #000000;
+    --bg-card-75: #0a0a0a;
+    --bg-sidebar-gray: #151515;
+    --bg-input: #050505;
+    --font-20-white: #ffffff;
+    --font-5-gray: #808080;
+    --border-ui: #1a1a1a;
+    --accent-blue: #00a2ff;
+    --chart-profit: #00ff88;
+    --chart-info: #00a2ff;
+    --chart-expense: #ffdb4d;
+    --danger: #ff4d4d;
+    --logo-primary: #ffffff;
+}
+
+body.light-theme {
+    --bg-75-black: #f0f2f5;
+    --bg-card-75: #ffffff;
+    --bg-sidebar-gray: #ffffff;
+    --bg-input: #ffffff;
+    --font-20-white: #1a1a1a;
+    --font-5-gray: #6c757d;
+    --border-ui: #dee2e6;
+    --logo-primary: #000000;
+}
+
+body { 
+    background-color: var(--bg-75-black); 
+    color: var(--font-20-white);
+    font-family: 'Inter', sans-serif; 
+    margin: 0; transition: all 0.3s ease;
+    overflow-x: hidden;
+}
+
+.logo-container { font-weight: 800; letter-spacing: 1px; }
+.logo-black { color: var(--logo-primary); transition: color 0.3s ease; }
+.logo-system { color: var(--font-5-gray); }
+
+.top-menu-bar {
+    position: fixed; top: 0; width: 100%; height: 60px;
+    background: var(--bg-75-black); border-bottom: 1px solid var(--border-ui);
+    z-index: 1040; display: flex; align-items: center; padding: 0 20px;
+    justify-content: space-between;
+}
+
+#sidebar { 
+    background: var(--bg-sidebar-gray); 
+    height: 100vh; width: 260px; position: fixed; 
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    z-index: 1050; left: 0; top: 0;
+    border-right: 1px solid var(--border-ui); 
+    padding-top: 20px;
+    transform: translateX(-100%);
+}
+#sidebar.active { transform: translateX(0); }
+#sidebar ul li a { 
+    padding: 15px 24px; display: flex; align-items: center; 
+    color: var(--font-20-white); text-decoration: none; font-weight: 600; 
+    font-size: 0.8rem; text-transform: uppercase;
+}
+#sidebar ul li a i { width: 30px; color: var(--font-5-gray); }
+
+.card { background: var(--bg-card-75); border: 1px solid var(--border-ui); border-radius: 8px; margin-bottom: 20px; }
+.stat-label { color: var(--font-5-gray); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.stat-value { font-weight: 800; font-size: 1.4rem; }
+
+.btn-action { background: var(--font-20-white); color: #000; font-weight: 700; border: none; padding: 12px; width: 100%; border-radius: 4px; text-transform: uppercase; font-size: 0.8rem; }
+.btn-icon { background: none; border: none; padding: 5px; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+.btn-edit { color: var(--accent-blue); }
+.btn-delete { color: var(--danger); }
+.btn-hide { color: var(--font-5-gray); }
+.item-hidden { opacity: 0.3; filter: grayscale(1); }
+
+.btn-danger-outline {
+    background: transparent; border: 1px solid var(--danger); color: var(--danger);
+    font-size: 0.7rem; font-weight: 700; padding: 10px; width: 100%; border-radius: 4px;
+    margin-top: 20px; text-transform: uppercase; transition: 0.3s;
+}
+
+.btn-print {
+    background: rgba(128, 128, 128, 0.1); color: var(--font-20-white);
+    border: 1px solid var(--border-ui); padding: 5px 12px;
+    border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+}
+
+.switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--accent-blue); }
+input:checked + .slider:before { transform: translateX(16px); }
+
+#chartContainer { height: 0; opacity: 0; overflow: hidden; transition: 0.4s ease; }
+#chartContainer.visible { height: 300px; opacity: 1; margin-top: 20px; }
+
+#main-wrapper { padding: 20px; padding-top: 85px; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+@media (min-width: 992px) { 
+    #sidebar.active ~ #main-wrapper { padding-left: 280px; } 
+}
+
+@media print {
+    .top-menu-bar, #sidebar, .btn-action, .btn-icon, .btn-danger-outline, .btn-print, .no-print { display: none !important; }
+    #main-wrapper { padding: 0; margin: 0; width: 100%; }
+    body { background: white !important; color: black !important; }
+    .card { border: 1px solid #ddd !important; background: white !important; page-break-inside: avoid; }
+}
