@@ -1,0 +1,29 @@
+<div id="main-wrapper">
+        <header class="page-header mb-4"><h2 style="font-weight:800">CADASTRAR ITEM</h2></header>
+        <div class="card p-4 mx-auto" style="max-width: 450px;">
+            <label class="stat-label mb-2">Nome</label>
+            <input type="text" id="c_nome" class="form-control bg-dark text-white border-secondary mb-3">
+            <div class="row g-2">
+                <div class="col-6"><label class="stat-label mb-2">Custo</label><input type="number" id="c_custo" class="form-control bg-dark text-white border-secondary mb-3"></div>
+                <div class="col-6"><label class="stat-label mb-2">Venda</label><input type="number" id="c_venda" class="form-control bg-dark text-white border-secondary mb-3"></div>
+            </div>
+            <label class="stat-label mb-2">Estoque Inicial</label>
+            <input type="number" id="c_est" class="form-control bg-dark text-white border-secondary mb-4">
+            <button class="btn-action" onclick="cadastrarItem()">Cadastrar Produto</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        function cadastrarItem() {
+            const nome = document.getElementById('c_nome').value;
+            const custo = parseFloat(document.getElementById('c_custo').value) || 0;
+            const venda = parseFloat(document.getElementById('c_venda').value) || 0;
+            const est = parseInt(document.getElementById('c_est').value) || 0;
+            if(nome) {
+                produtos.push({ id: Date.now(), nome, custo, venda, estoque: est, oculto: false });
+                saveAndRefresh();
+                window.location.href = "estoque.html";
+            }
+        }
+    </script>
+    
