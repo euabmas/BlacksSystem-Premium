@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACKSYSTEM | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-menu-bar">
+        <div class="d-flex align-items-center gap-2">
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:inherit;"><i class="fas fa-bars"></i></button>
+            <div class="logo-container"><span class="logo-black">BLACK</span><span class="logo-system">SYSTEM</span></div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn-print" onclick="window.print()"><i class="fas fa-print me-1"></i> IMPRIMIR</button>
+            <label class="switch"><input type="checkbox" id="themeSwitch" onchange="manualThemeToggle()"><span class="slider"></span></label>
+        </div>
+    </div>
+
+    <nav id="sidebar">
+        <div class="px-4 py-2 d-flex justify-content-between align-items-center">
+            <div class="logo-container"><span class="logo-black">BLACK</span><span class="logo-system">SYSTEM</span></div>
+            <i class="fas fa-times" style="cursor:pointer; color:gray" onclick="toggleSidebar()"></i>
+        </div>
+        <ul class="list-unstyled">
+            <li><a href="index.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="vendas.html"><i class="fas fa-cart-plus"></i> Registrar Venda</a></li>
+            <li><a href="estoque.html"><i class="fas fa-boxes"></i> Estoque</a></li>
+            <li><a href="cadastro.html"><i class="fas fa-plus-circle"></i> Cadastrar Item</a></li>
+            <li class="px-4"><button class="btn-danger-outline" onclick="resetDatabase()"><i class="fas fa-trash-alt me-2"></i> Limpar Banco</button></li>
+        </ul>
+    </nav>
+
+    <div id="main-wrapper">
+        <header class="page-header mb-4">
+            <h2 style="font-weight:800">DASHBOARD</h2>
+            <p id="current-date" class="m-0" style="color: var(--font-5-gray); font-size: 0.85rem;"></p>
+        </header>
+
+        <section id="home">
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3"><div class="card p-3"><span class="stat-label">Faturamento</span><div class="stat-value" style="color:var(--chart-profit)" id="dash-fat">R$ 0,00</div></div></div>
+                <div class="col-6 col-md-3"><div class="card p-3"><span class="stat-label">Lucro Líquido</span><div class="stat-value" style="color:var(--chart-info)" id="dash-lucro">R$ 0,00</div></div></div>
+                <div class="col-6 col-md-3"><div class="card p-3"><span class="stat-label">Vendas</span><div class="stat-value" id="dash-vendas-count">0</div></div></div>
+                <div class="col-6 col-md-3"><div class="card p-3"><span class="stat-label">CMV (Custos)</span><div class="stat-value" style="color:var(--chart-expense)" id="dash-gastos-home">R$ 0,00</div></div></div>
+            </div>
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span style="font-weight: 700; font-size: 0.75rem; letter-spacing:1px">DESEMPENHO (LUCRO)</span>
+                    <label class="switch"><input type="checkbox" id="toggleChart" onchange="updateChartVisibility()"><span class="slider"></span></label>
+                </div>
+                <div id="chartContainer"><canvas id="chartLinha"></canvas></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function refresh() {
+            let fat = 0, luc = 0, qV = 0, gas = 0;
+            vendas.forEach(v => { fat += v.total; luc += v.lucro; qV++; gas += v.gastoVenda; });
+            document.getElementById('dash-fat').innerText = `R$ ${fat.toLocaleString('pt-br', {minimumFractionDigits:2})}`;
+            document.getElementById('dash-lucro').innerText = `R$ ${luc.toLocaleString('pt-br', {minimumFractionDigits:2})}`;
+            document.getElementById('dash-vendas-count').innerText = qV;
+            document.getElementById('dash-gastos-home').innerText = `R$ ${gas.toLocaleString('pt-br', {minimumFractionDigits:2})}`;
+            if(document.getElementById('toggleChart').checked) initChart();
+        }
+
+        function updateChartVisibility() {
+            const container = document.getElementById('chartContainer');
+            if (document.getElementById('toggleChart').checked) { 
+                container.classList.add('visible'); 
+                setTimeout(initChart, 400); 
+            } else { 
+                container.classList.remove('visible'); 
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('chartLinha').getContext('2d');
+            if(chartL) chartL.destroy();
+            const isLight = document.body.classList.contains('light-theme');
+            chartL = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: vendas.map(v => v.data).slice(-10),
+                    datasets: [{ data: vendas.map(v => v.lucro).slice(-10), borderColor: '#00a2ff', tension: 0.3, fill: true, backgroundColor: 'rgba(0, 162, 255, 0.1)' }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: isLight ? '#eee' : '#1a1a1a' } }, x: { grid: { display: false } } } }
+            });
+        }
+        window.onload = refresh;
+    </script>
+</body>
+  </html>
+  
