@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACKSYSTEM | Vendas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-wrapper">
+        <header class="page-header mb-4"><h2 style="font-weight:800">REGISTRAR VENDA</h2></header>
+        <section id="vendas">
+            <div class="card p-4 mx-auto" style="max-width: 450px;">
+                <label class="stat-label mb-2">Produto</label>
+                <select id="v_prod" class="form-select bg-dark text-white border-secondary mb-3"></select>
+                <label class="stat-label mb-2">Quantidade</label>
+                <input type="number" id="v_qtd" class="form-control bg-dark text-white border-secondary mb-4" value="1">
+                <button class="btn-action" onclick="finalizarVenda()">Confirmar Venda</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function refresh() {
+            const sel = document.getElementById('v_prod');
+            sel.innerHTML = '<option value="">Selecionar produto...</option>';
+            produtos.forEach(p => { if(p.estoque > 0 && !p.oculto) sel.innerHTML += `<option value="${p.id}">${p.nome} (${p.estoque} un)</option>`; });
+        }
+
+        function finalizarVenda() {
+            const id = parseInt(document.getElementById('v_prod').value);
+            const qtd = parseInt(document.getElementById('v_qtd').value);
+            const p = produtos.find(x => x.id === id);
+            if(!id || !p || p.estoque < qtd) return alert("Erro no estoque ou seleção!");
+            
+            vendas.push({ 
+                prodId: id, lucro: (p.venda - p.custo) * qtd, total: p.venda * qtd, 
+                gastoVenda: p.custo * qtd, data: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) 
+            });
+            p.estoque -= qtd;
+            saveAndRefresh();
+            window.location.href = "index.html";
+        }
+        window.onload = refresh;
+    </script>
+</body>
+</html>
