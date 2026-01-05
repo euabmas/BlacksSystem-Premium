@@ -1,0 +1,61 @@
+<div id="main-wrapper">
+        <header class="page-header mb-4"><h2 style="font-weight:800">ESTOQUE</h2></header>
+        <div class="card p-3 mb-3" style="border-left: 4px solid var(--accent-blue);">
+            <span class="stat-label">Investimento Total em Stock</span>
+            <div class="stat-value" style="color:var(--accent-blue)" id="dash-investimento-estoque">R$ 0,00</div>
+        </div>
+        <div class="card p-3">
+            <div class="table-responsive">
+                <table class="table align-middle text-white" id="tbl-estoque">
+                    <thead><tr style="font-size:0.65rem; color:var(--font-5-gray); text-transform:uppercase">
+                        <th>Produto</th><th class="text-center">Qtd</th><th>Custo</th><th>Venda</th><th class="text-center no-print">Ações</th>
+                    </tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        function refresh() {
+            let inv = 0;
+            const tbody = document.querySelector('#tbl-estoque tbody');
+            tbody.innerHTML = '';
+            produtos.forEach(p => {
+                if(!p.oculto) inv += (p.custo * p.estoque);
+                tbody.innerHTML += `
+                <tr class="${p.oculto ? 'item-hidden' : ''}">
+                    <td><strong>${p.nome}</strong></td>
+                    <td class="text-center"><span class="badge ${p.estoque < 5 ? 'bg-danger' : 'bg-dark border'}">${p.estoque}</span></td>
+                    <td style="color:var(--chart-expense)">R$ ${p.custo.toFixed(2)}</td>
+                    <td style="color:var(--chart-profit)">R$ ${p.venda.toFixed(2)}</td>
+                    <td class="text-center no-print">
+                        <button class="btn-icon btn-edit" onclick="editarItem(${p.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-hide" onclick="ocultarItem(${p.id})"><i class="fas ${p.oculto ? 'fa-eye-slash' : 'fa-eye'}"></i></button>
+                        <button class="btn-icon btn-delete" onclick="deletarItem(${p.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('dash-investimento-estoque').innerText = `R$ ${inv.toLocaleString('pt-br', {minimumFractionDigits:2})}`;
+        }
+        
+        function editarItem(id) {
+            const p = produtos.find(x => x.id === id);
+            if(!p) return;
+            p.nome = prompt("Nome:", p.nome) || p.nome;
+            p.custo = parseFloat(prompt("Custo:", p.custo)) || p.custo;
+            p.venda = parseFloat(prompt("Venda:", p.venda)) || p.venda;
+            p.estoque = parseInt(prompt("Estoque:", p.estoque)) || p.estoque;
+            saveAndRefresh();
+        }
+
+        function ocultarItem(id) {
+            const p = produtos.find(x => x.id === id);
+            if(p) { p.oculto = !p.oculto; saveAndRefresh(); }
+        }
+
+        function deletarItem(id) {
+            if(confirm("Excluir item?")) { produtos = produtos.filter(p => p.id !== id); saveAndRefresh(); }
+        }
+        window.onload = refresh;
+    </script>
